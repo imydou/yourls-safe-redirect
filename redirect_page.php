@@ -46,6 +46,7 @@
         }
         p span {
             color: red;
+            word-wrap: break-word;
         }
     </style>
 </head>

@@ -27,6 +27,22 @@ function safe_redirect($args) {
     if ($setting_option) {
         $setting = unserialize($setting_option);
 
+        // Check user agent
+        $user_agent = $setting['user_agent'];
+        if ($user_agent) {
+            $user_agent = explode("\r\n", $user_agent);
+            $is_redirect = false;
+            foreach ($user_agent as $ua) {
+                if (str_contains($_SERVER['HTTP_USER_AGENT'], $ua)) {
+                    $is_redirect = true;
+                    break;
+                }
+            }
+            if (!$is_redirect) {
+                return;
+            }
+        }
+
         if ($setting['relay_domain'] && $setting['relay_domain'] != $_SERVER['HTTP_HOST']) {
             //redirect to relay domain
             header('Location: ' . ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . '://' . $setting['relay_domain'] . $_SERVER['REQUEST_URI']);
